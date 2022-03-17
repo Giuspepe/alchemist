@@ -41,6 +41,7 @@ abstract class GoldenTestRunner {
     BoxConstraints constraints = const BoxConstraints(),
     ThemeData? theme,
     PumpAction pumpBeforeTest = onlyPumpAndSettle,
+    PumpWidget pumpWidget = onlyPumpWidget,
     Interaction? whilePerforming,
   });
 }
@@ -65,6 +66,7 @@ class FlutterGoldenTestRunner extends GoldenTestRunner {
     BoxConstraints constraints = const BoxConstraints(),
     ThemeData? theme,
     PumpAction pumpBeforeTest = onlyPumpAndSettle,
+    PumpWidget pumpWidget = onlyPumpWidget,
     Interaction? whilePerforming,
   }) async {
     assert(
@@ -84,6 +86,9 @@ class FlutterGoldenTestRunner extends GoldenTestRunner {
         rootKey: rootKey,
         textScaleFactor: textScaleFactor,
         constraints: constraints,
+        pumpBeforeTest: pumpBeforeTest,
+        pumpWidget: pumpWidget,
+        widget: widget,
         theme: themeData.copyWith(
           textTheme: obscureText
               ? themeData.textTheme.apply(
@@ -91,10 +96,7 @@ class FlutterGoldenTestRunner extends GoldenTestRunner {
                 )
               : themeData.textTheme,
         ),
-        widget: widget,
       );
-
-      await pumpBeforeTest(tester);
 
       AsyncCallback? cleanup;
       if (whilePerforming != null) {

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:alchemist/src/blocked_text_image.dart';
+import 'package:alchemist/src/pumps.dart';
 import 'package:alchemist/src/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -161,6 +162,8 @@ abstract class GoldenTestAdapter {
     required BoxConstraints constraints,
     required ThemeData theme,
     required Widget widget,
+    required PumpAction pumpBeforeTest,
+    required PumpWidget pumpWidget,
   });
 
   /// Generates an image of the widget at the given [finder] with all text
@@ -220,6 +223,8 @@ class FlutterGoldenTestAdapter extends GoldenTestAdapter {
     required BoxConstraints constraints,
     required ThemeData theme,
     required Widget widget,
+    required PumpAction pumpBeforeTest,
+    required PumpWidget pumpWidget,
   }) async {
     final initialSize = Size(
       constraints.hasBoundedWidth ? constraints.maxWidth : 2000,
@@ -231,7 +236,8 @@ class FlutterGoldenTestAdapter extends GoldenTestAdapter {
     tester.binding.window.devicePixelRatioTestValue = 1.0;
     tester.binding.window.textScaleFactorTestValue = textScaleFactor;
 
-    await tester.pumpWidget(
+    await pumpWidget(
+      tester,
       MaterialApp(
         key: rootKey,
         theme: theme.stripTextPackages(),
@@ -260,6 +266,8 @@ class FlutterGoldenTestAdapter extends GoldenTestAdapter {
     );
 
     final shouldTryResize = !constraints.isTight;
+
+    await pumpBeforeTest(tester);
 
     if (shouldTryResize) {
       final childSize = tester.getSize(find.byKey(childKey));
