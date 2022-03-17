@@ -5,6 +5,8 @@ import 'package:flutter/rendering.dart';
 
 /// {@template blocked_text_painting_context}
 /// A painting context used to replace all text blocks with colored rectangles.
+/// Text spans whose font family is in [fontFamilyWhitelist] are rendered
+/// normally and not replaced with colored rectangles.
 ///
 /// This is used in golden tests to circumvent inconsistencies with font
 /// rendering between operating systems.
@@ -16,7 +18,12 @@ class BlockedTextPaintingContext extends PaintingContext {
   BlockedTextPaintingContext({
     required ContainerLayer containerLayer,
     required Rect estimatedBounds,
+    required this.fontFamilyWhitelist,
   }) : super(containerLayer, estimatedBounds);
+
+  /// List of font families for which text spans should be rendered normally
+  /// instead of being replaced with colored rectangles.
+  final List<String> fontFamilyWhitelist;
 
   @override
   ui.Canvas get canvas {
@@ -31,12 +38,14 @@ class BlockedTextPaintingContext extends PaintingContext {
     return BlockedTextPaintingContext(
       containerLayer: childLayer,
       estimatedBounds: bounds,
+      fontFamilyWhitelist: fontFamilyWhitelist,
     );
   }
 
   @override
   void paintChild(RenderObject child, Offset offset) {
-    if (child is RenderParagraph) {
+    if (child is RenderParagraph &&
+        !fontFamilyWhitelist.contains(child.text.style?.fontFamily)) {
       final paint = Paint()
         ..color = child.text.style?.color ?? const Color(0xFF000000);
       canvas.drawRect(offset & child.size, paint);

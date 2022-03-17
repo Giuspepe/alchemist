@@ -36,6 +36,7 @@ abstract class GoldenTestRunner {
     required Widget widget,
     bool forceUpdate = false,
     bool obscureText = false,
+    List<String> fontFamilyWhitelist,
     bool renderShadows = false,
     double textScaleFactor = 1.0,
     BoxConstraints constraints = const BoxConstraints(),
@@ -61,6 +62,7 @@ class FlutterGoldenTestRunner extends GoldenTestRunner {
     required Widget widget,
     bool forceUpdate = false,
     bool obscureText = false,
+    List<String> fontFamilyWhitelist = const [],
     bool renderShadows = false,
     double textScaleFactor = 1.0,
     BoxConstraints constraints = const BoxConstraints(),
@@ -109,6 +111,7 @@ class FlutterGoldenTestRunner extends GoldenTestRunner {
           ? goldenTestAdapter.getBlockedTextImage(
               finder: root,
               tester: tester,
+              fontFamilyWhitelist: fontFamilyWhitelist,
             )
           : root;
 

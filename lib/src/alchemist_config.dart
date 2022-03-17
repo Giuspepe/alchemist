@@ -279,6 +279,7 @@ abstract class GoldensConfig extends Equatable {
   const GoldensConfig({
     required this.enabled,
     required this.obscureText,
+    required this.fontFamilyWhitelist,
     required this.renderShadows,
     FilePathResolver? filePathResolver,
     ThemeData? theme,
@@ -293,6 +294,11 @@ abstract class GoldensConfig extends Equatable {
   /// This is useful for circumventing differences in font rendering
   /// between platforms.
   final bool obscureText;
+
+  /// List of font families for which text spans should be rendered normally
+  /// instead of being replaced with colored rectangles
+  /// when [obscureText] is `true`.
+  final List<String> fontFamilyWhitelist;
 
   /// Whether shadows should be rendered normally or as solid color blocks.
   ///
@@ -386,6 +392,7 @@ class PlatformGoldensConfig extends GoldensConfig {
     Set<HostPlatform>? platforms,
     bool enabled = true,
     bool obscureText = false,
+    List<String> fontFamilyWhitelist = const [],
     bool renderShadows = true,
     FilePathResolver? filePathResolver,
     ThemeData? theme,
@@ -393,6 +400,7 @@ class PlatformGoldensConfig extends GoldensConfig {
         super(
           enabled: enabled,
           obscureText: obscureText,
+          fontFamilyWhitelist: fontFamilyWhitelist,
           renderShadows: renderShadows,
           filePathResolver: filePathResolver,
           theme: theme,
@@ -480,12 +488,14 @@ class CiGoldensConfig extends GoldensConfig {
   const CiGoldensConfig({
     bool enabled = true,
     bool obscureText = true,
+    List<String> fontFamilyWhitelist = const [],
     bool renderShadows = false,
     FilePathResolver? filePathResolver,
     ThemeData? theme,
   }) : super(
           enabled: enabled,
           obscureText: obscureText,
+          fontFamilyWhitelist: fontFamilyWhitelist,
           renderShadows: renderShadows,
           filePathResolver: filePathResolver,
           theme: theme,
@@ -494,10 +504,13 @@ class CiGoldensConfig extends GoldensConfig {
   @override
   String get environmentName => 'CI';
 
+  static const _sentinel = [''];
+
   @override
   CiGoldensConfig copyWith({
     bool? enabled,
     bool? obscureText,
+    List<String> fontFamilyWhitelist = _sentinel,
     bool? renderShadows,
     FilePathResolver? filePathResolver,
     ThemeData? theme,
@@ -505,6 +518,9 @@ class CiGoldensConfig extends GoldensConfig {
     return CiGoldensConfig(
       enabled: enabled ?? this.enabled,
       obscureText: obscureText ?? this.obscureText,
+      fontFamilyWhitelist: fontFamilyWhitelist == _sentinel
+          ? this.fontFamilyWhitelist
+          : fontFamilyWhitelist,
       renderShadows: renderShadows ?? this.renderShadows,
       filePathResolver: filePathResolver ?? this.filePathResolver,
       theme: theme ?? this.theme,

@@ -167,6 +167,7 @@ Future<void> goldenTest(
         forceUpdate: config.forceUpdateGoldenFiles,
         obscureText: goldensConfig.obscureText,
         renderShadows: goldensConfig.renderShadows,
+        fontFamilyWhitelist: goldensConfig.fontFamilyWhitelist,
         textScaleFactor: textScaleFactor,
         constraints: constraints,
         theme: goldensConfig.theme ?? config.theme ?? ThemeData.light(),

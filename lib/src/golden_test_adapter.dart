@@ -79,6 +79,7 @@ set tearDownFn(TestLifecycleFn value) => _tearDownFn = value;
 typedef BlockedTextPaintingContextBuilder = BlockedTextPaintingContext Function(
   OffsetLayer layer,
   Rect bounds,
+  List<String> fontFamilyWhitelist,
 );
 
 /// Default blocked text painting context builder which returns a real instance
@@ -87,8 +88,13 @@ typedef BlockedTextPaintingContextBuilder = BlockedTextPaintingContext Function(
 BlockedTextPaintingContextBuilder defaultPaintingContextBuilder = (
   OffsetLayer layer,
   Rect bounds,
+  List<String> fontFamilyWhitelist,
 ) =>
-    BlockedTextPaintingContext(containerLayer: layer, estimatedBounds: bounds);
+    BlockedTextPaintingContext(
+      containerLayer: layer,
+      estimatedBounds: bounds,
+      fontFamilyWhitelist: fontFamilyWhitelist,
+    );
 BlockedTextPaintingContextBuilder _paintingContextBuilder =
     defaultPaintingContextBuilder;
 
@@ -167,12 +173,14 @@ abstract class GoldenTestAdapter {
   });
 
   /// Generates an image of the widget at the given [finder] with all text
-  /// represented as colored rectangles.
+  /// represented as colored rectangles,
+  /// except those whose text family is in [fontFamilyWhitelist].
   ///
   /// See [BlockedTextPaintingContext] for more details.
   Future<ui.Image> getBlockedTextImage({
     required Finder finder,
     required WidgetTester tester,
+    required List<String> fontFamilyWhitelist,
   });
 }
 
@@ -288,6 +296,7 @@ class FlutterGoldenTestAdapter extends GoldenTestAdapter {
   Future<ui.Image> getBlockedTextImage({
     required Finder finder,
     required WidgetTester tester,
+    required List<String> fontFamilyWhitelist,
   }) async {
     var renderObject = tester.renderObject(finder);
     while (!renderObject.isRepaintBoundary) {
@@ -297,6 +306,7 @@ class FlutterGoldenTestAdapter extends GoldenTestAdapter {
     paintingContextBuilder(
       layer,
       renderObject.paintBounds,
+      fontFamilyWhitelist,
     ).paintSingleChild(renderObject);
 
     return layer.toImage(renderObject.paintBounds);
