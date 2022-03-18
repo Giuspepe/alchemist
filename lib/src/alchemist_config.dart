@@ -348,6 +348,7 @@ abstract class GoldensConfig extends Equatable {
   GoldensConfig copyWith({
     bool? enabled,
     bool? obscureText,
+    List<Pattern>? fontFamilyWhitelist,
     bool? renderShadows,
     FilePathResolver? filePathResolver,
     ThemeData? theme,
@@ -360,6 +361,7 @@ abstract class GoldensConfig extends Equatable {
   @override
   List<Object?> get props => [
         obscureText,
+        fontFamilyWhitelist,
         enabled,
         filePathResolver,
         theme,
