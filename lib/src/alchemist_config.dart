@@ -298,7 +298,7 @@ abstract class GoldensConfig extends Equatable {
   /// List of font families for which text spans should be rendered normally
   /// instead of being replaced with colored rectangles
   /// when [obscureText] is `true`.
-  final List<String> fontFamilyWhitelist;
+  final List<Pattern> fontFamilyWhitelist;
 
   /// Whether shadows should be rendered normally or as solid color blocks.
   ///
@@ -392,7 +392,7 @@ class PlatformGoldensConfig extends GoldensConfig {
     Set<HostPlatform>? platforms,
     bool enabled = true,
     bool obscureText = false,
-    List<String> fontFamilyWhitelist = const [],
+    List<Pattern> fontFamilyWhitelist = const [],
     bool renderShadows = true,
     FilePathResolver? filePathResolver,
     ThemeData? theme,
@@ -432,6 +432,7 @@ class PlatformGoldensConfig extends GoldensConfig {
     Set<HostPlatform>? platforms,
     bool? enabled,
     bool? obscureText,
+    List<Pattern>? fontFamilyWhitelist,
     bool? renderShadows,
     FilePathResolver? filePathResolver,
     ThemeData? theme,
@@ -440,6 +441,7 @@ class PlatformGoldensConfig extends GoldensConfig {
       platforms: platforms ?? this.platforms,
       enabled: enabled ?? this.enabled,
       obscureText: obscureText ?? this.obscureText,
+      fontFamilyWhitelist: fontFamilyWhitelist ?? this.fontFamilyWhitelist,
       renderShadows: renderShadows ?? this.renderShadows,
       filePathResolver: filePathResolver ?? this.filePathResolver,
       theme: theme ?? this.theme,
@@ -452,6 +454,7 @@ class PlatformGoldensConfig extends GoldensConfig {
       platforms: other?._platforms,
       enabled: other?.enabled,
       obscureText: other?.obscureText,
+      fontFamilyWhitelist: other?.fontFamilyWhitelist,
       renderShadows: other?.renderShadows,
       filePathResolver: other?._filePathResolver,
       theme: other?._theme,
@@ -488,7 +491,7 @@ class CiGoldensConfig extends GoldensConfig {
   const CiGoldensConfig({
     bool enabled = true,
     bool obscureText = true,
-    List<String> fontFamilyWhitelist = const [],
+    List<Pattern> fontFamilyWhitelist = const [],
     bool renderShadows = false,
     FilePathResolver? filePathResolver,
     ThemeData? theme,
@@ -504,13 +507,11 @@ class CiGoldensConfig extends GoldensConfig {
   @override
   String get environmentName => 'CI';
 
-  static const _sentinel = [''];
-
   @override
   CiGoldensConfig copyWith({
     bool? enabled,
     bool? obscureText,
-    List<String> fontFamilyWhitelist = _sentinel,
+    List<Pattern>? fontFamilyWhitelist,
     bool? renderShadows,
     FilePathResolver? filePathResolver,
     ThemeData? theme,
@@ -518,9 +519,7 @@ class CiGoldensConfig extends GoldensConfig {
     return CiGoldensConfig(
       enabled: enabled ?? this.enabled,
       obscureText: obscureText ?? this.obscureText,
-      fontFamilyWhitelist: fontFamilyWhitelist == _sentinel
-          ? this.fontFamilyWhitelist
-          : fontFamilyWhitelist,
+      fontFamilyWhitelist: fontFamilyWhitelist ?? this.fontFamilyWhitelist,
       renderShadows: renderShadows ?? this.renderShadows,
       filePathResolver: filePathResolver ?? this.filePathResolver,
       theme: theme ?? this.theme,
@@ -532,6 +531,7 @@ class CiGoldensConfig extends GoldensConfig {
     return copyWith(
       enabled: other?.enabled,
       obscureText: other?.obscureText,
+      fontFamilyWhitelist: other?.fontFamilyWhitelist,
       renderShadows: other?.renderShadows,
       filePathResolver: other?._filePathResolver,
       theme: other?._theme,

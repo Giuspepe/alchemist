@@ -23,7 +23,7 @@ class BlockedTextPaintingContext extends PaintingContext {
 
   /// List of font families for which text spans should be rendered normally
   /// instead of being replaced with colored rectangles.
-  final List<String> fontFamilyWhitelist;
+  final List<Pattern> fontFamilyWhitelist;
 
   @override
   ui.Canvas get canvas {
@@ -44,14 +44,21 @@ class BlockedTextPaintingContext extends PaintingContext {
 
   @override
   void paintChild(RenderObject child, Offset offset) {
-    if (child is RenderParagraph &&
-        !fontFamilyWhitelist.contains(child.text.style?.fontFamily)) {
-      final paint = Paint()
-        ..color = child.text.style?.color ?? const Color(0xFF000000);
-      canvas.drawRect(offset & child.size, paint);
-    } else {
-      return child.paint(this, offset);
+    if (child is RenderParagraph) {
+      final fontFamily = child.text.style?.fontFamily;
+      if (fontFamily == null ||
+          fontFamilyWhitelist.every(
+            (whitelistPattern) =>
+                whitelistPattern.matchAsPrefix(fontFamily) == null,
+          )) {
+        final paint = Paint()
+          ..color = child.text.style?.color ?? const Color(0xFF000000);
+        canvas.drawRect(offset & child.size, paint);
+        return;
+      }
     }
+
+    return child.paint(this, offset);
   }
 
   /// Paints the single given [RenderObject].

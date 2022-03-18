@@ -79,7 +79,7 @@ set tearDownFn(TestLifecycleFn value) => _tearDownFn = value;
 typedef BlockedTextPaintingContextBuilder = BlockedTextPaintingContext Function(
   OffsetLayer layer,
   Rect bounds,
-  List<String> fontFamilyWhitelist,
+  List<Pattern> fontFamilyWhitelist,
 );
 
 /// Default blocked text painting context builder which returns a real instance
@@ -88,7 +88,7 @@ typedef BlockedTextPaintingContextBuilder = BlockedTextPaintingContext Function(
 BlockedTextPaintingContextBuilder defaultPaintingContextBuilder = (
   OffsetLayer layer,
   Rect bounds,
-  List<String> fontFamilyWhitelist,
+  List<Pattern> fontFamilyWhitelist,
 ) =>
     BlockedTextPaintingContext(
       containerLayer: layer,
@@ -180,7 +180,7 @@ abstract class GoldenTestAdapter {
   Future<ui.Image> getBlockedTextImage({
     required Finder finder,
     required WidgetTester tester,
-    required List<String> fontFamilyWhitelist,
+    required List<Pattern> fontFamilyWhitelist,
   });
 }
 
@@ -296,7 +296,7 @@ class FlutterGoldenTestAdapter extends GoldenTestAdapter {
   Future<ui.Image> getBlockedTextImage({
     required Finder finder,
     required WidgetTester tester,
-    required List<String> fontFamilyWhitelist,
+    required List<Pattern> fontFamilyWhitelist,
   }) async {
     var renderObject = tester.renderObject(finder);
     while (!renderObject.isRepaintBoundary) {
