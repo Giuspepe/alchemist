@@ -124,6 +124,7 @@ class FlutterGoldenTestRunner extends GoldenTestRunner {
       }
     } finally {
       debugDisableShadows = mementoDebugDisableShadows;
+      await tester.binding.setSurfaceSize(null);
     }
   }
 }

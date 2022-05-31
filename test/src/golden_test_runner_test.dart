@@ -258,6 +258,30 @@ void main() {
       expect(debugDisableShadowsDuringTestRun, isFalse);
     });
 
+    testWidgets('surface size is reset after the test has run ',
+        (tester) async {
+      final initialSurfaceSize = tester.binding.createViewConfiguration().size;
+
+      final givenException = Exception();
+      await expectLater(
+        goldenTestRunner.run(
+          tester: tester,
+          goldenPath: 'path/to/golden',
+          widget: Container(),
+          whilePerforming: (tester) async {
+            await tester.binding.setSurfaceSize(
+              initialSurfaceSize + const Offset(42, 42),
+            );
+            throw givenException;
+          },
+        ),
+        throwsA(same(givenException)),
+      );
+
+      final postTestSurfaceSize = tester.binding.createViewConfiguration().size;
+      expect(postTestSurfaceSize, equals(initialSurfaceSize));
+    });
+
     tearDownAll(() {
       goldenTestAdapter = defaultGoldenTestAdapter;
     });
